@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import type { PairData } from "../../src/api/coinbase.ts";
 import { getTradingPairs } from "../../src/api/coinbase.ts";
 
+const DEFAULT_BASE_CURRENCY = "ETH";
+const DEFAULT_QUOTE_CURRENCY = "USD";
+
 type Currencies = Record<string, string[]>;
 
 const getCurrenciesFromData = (pairsData: PairData[]): Currencies => {
@@ -22,11 +25,11 @@ const getCurrenciesFromData = (pairsData: PairData[]): Currencies => {
 export const useCurrencies = () => {
 	const [currencies, setCurrencies] = useState<Currencies>();
 
-	const [baseCurrencies, setBaseCurrencies] = useState([""]);
-	const [quoteCurrencies, setQuoteCurrencies] = useState([""]);
+	const [baseCurrencies, setBaseCurrencies] = useState([DEFAULT_BASE_CURRENCY]);
+	const [quoteCurrencies, setQuoteCurrencies] = useState([DEFAULT_QUOTE_CURRENCY]); // prettier-ignore
 
-	const [baseCurrencySelected, setBaseCurrencySelected] = useState("");
-	const [quoteCurrencySelected, setQuoteCurrencySelected] = useState("");
+	const [baseCurrencySelected, setBaseCurrencySelected] = useState(DEFAULT_BASE_CURRENCY); // prettier-ignore
+	const [quoteCurrencySelected, setQuoteCurrencySelected] = useState(DEFAULT_QUOTE_CURRENCY); // prettier-ignore
 
 	useEffect(() => {
 		getTradingPairs().then(
@@ -36,23 +39,31 @@ export const useCurrencies = () => {
 
 	useEffect(() => {
 		if (!currencies) return;
+
 		const newBaseCurrencies = Object.keys(currencies);
+		const newBaseCurrency = newBaseCurrencies.includes(DEFAULT_BASE_CURRENCY)
+			? DEFAULT_BASE_CURRENCY
+			: newBaseCurrencies[0];
+
 		setBaseCurrencies(newBaseCurrencies);
-		setBaseCurrencySelected(newBaseCurrencies[0]);
+		setBaseCurrencySelected(newBaseCurrency);
 	}, [currencies]);
 
 	useEffect(() => {
 		if (!currencies) return;
-		const newQuoteCurrencies = currencies[baseCurrencySelected] ?? [""];
-		setQuoteCurrencies(newQuoteCurrencies);
-	}, [currencies, baseCurrencySelected]);
 
-	useEffect(() => {
-		if (!quoteCurrencies.includes(quoteCurrencySelected)) {
-			setQuoteCurrencySelected(quoteCurrencies[0]);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [quoteCurrencies, baseCurrencySelected]);
+		const newQuoteCurrencies = currencies[baseCurrencySelected];
+		const isOldQuoteCurrencyAvailable = newQuoteCurrencies.includes(quoteCurrencySelected); // prettier-ignore
+		const isDefaultQuoteCurrencyAvailable = newQuoteCurrencies.includes(DEFAULT_QUOTE_CURRENCY); // prettier-ignore
+		const newQuoteCurrency = isOldQuoteCurrencyAvailable
+			? null
+			: isDefaultQuoteCurrencyAvailable
+			? DEFAULT_QUOTE_CURRENCY
+			: newQuoteCurrencies[0];
+
+		setQuoteCurrencies(newQuoteCurrencies);
+		newQuoteCurrency && setQuoteCurrencySelected(newQuoteCurrency);
+	}, [currencies, baseCurrencySelected, quoteCurrencySelected]);
 
 	return {
 		baseCurrencies,
