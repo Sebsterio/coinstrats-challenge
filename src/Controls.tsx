@@ -1,12 +1,17 @@
 import type { CurrenciesProps } from "./hooks/useCurrencies.ts";
+import type { FeedProps } from "./hooks/useFeed.ts";
 
-export const Controls: React.FC<CurrenciesProps> = ({
+export const Controls: React.FC<CurrenciesProps & FeedProps> = ({
 	baseCurrencies,
 	quoteCurrencies,
 	baseCurrencySelected,
 	quoteCurrencySelected,
 	setBaseCurrencySelected,
 	setQuoteCurrencySelected,
+	// feed props:
+	isEnabled,
+	isStatusChanging,
+	toggleFeed,
 }) => {
 	const handleSelectBaseCurrency = (e: React.ChangeEvent<HTMLSelectElement>) =>
 		setBaseCurrencySelected(e.target.value);
@@ -38,6 +43,10 @@ export const Controls: React.FC<CurrenciesProps> = ({
 					</option>
 				))}
 			</select>
+
+			<button onClick={toggleFeed} disabled={isStatusChanging}>
+				{isEnabled ? "stop" : "start"}
+			</button>
 		</>
 	);
 };
