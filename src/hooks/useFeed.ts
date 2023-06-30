@@ -3,11 +3,17 @@ import useWebSocket from "react-use-websocket";
 
 const WS_URL = "wss://ws-feed.exchange.coinbase.com";
 
-const subscribeMsg = {
-	type: "subscribe",
-	product_ids: ["ETH-USD"],
-	channels: ["matches"],
-};
+const getMessage = (
+	type: "subscribe" | "unsubscribe",
+	currencyPairId: string
+) => (
+	console.log(type, currencyPairId),
+	{
+		type,
+		product_ids: [currencyPairId],
+		channels: ["matches"],
+	}
+);
 
 type MatchData = {
 	type: string;
@@ -22,7 +28,10 @@ type MatchData = {
 	time: string;
 };
 
-export const useFeed = () => {
+type Props = { currencyPairId: string };
+
+export const useFeed = ({ currencyPairId }: Props) => {
+	const [prevCurrencyPairId, setPrevCurrencyPairId] = useState<string>();
 	const [isEnabled, setIsEnabled] = useState(true);
 	const [isOpen, setIsOpen] = useState(false);
 	const [data, setData] = useState<MatchData[]>([]);
@@ -38,8 +47,16 @@ export const useFeed = () => {
 	});
 
 	useEffect(() => {
-		isOpen && sendJsonMessage(subscribeMsg);
-	}, [isOpen, sendJsonMessage]);
+		if (prevCurrencyPairId === currencyPairId) return;
+		if (prevCurrencyPairId) sendJsonMessage(getMessage("unsubscribe", prevCurrencyPairId)); // prettier-ignore
+		setPrevCurrencyPairId(currencyPairId);
+		setData([]);
+		setIsEnabled(true);
+	}, [setData, sendJsonMessage, isOpen, currencyPairId, prevCurrencyPairId]);
+
+	useEffect(() => {
+		isOpen && sendJsonMessage(getMessage("subscribe", currencyPairId));
+	}, [sendJsonMessage, isOpen, currencyPairId]);
 
 	const isStatusChanging = isEnabled !== isOpen;
 

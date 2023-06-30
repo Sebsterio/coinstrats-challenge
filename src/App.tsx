@@ -5,7 +5,7 @@ import { LatestTradesPanel } from "./LatestTradesPanel.tsx";
 
 function App() {
 	const currenciesState = useCurrencies();
-	const feedState = useFeed();
+	const feedState = useFeed(currenciesState);
 
 	return (
 		<>
