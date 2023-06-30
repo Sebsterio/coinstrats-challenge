@@ -1,0 +1,23 @@
+.LatestTradesPanel .new-row {
+	animation: pulse-once 1600ms;
+}
+
+.LatestTradesPanel .new-row.sell {
+	--bg: rgb(109, 227, 109);
+}
+
+.LatestTradesPanel .new-row.buy {
+	--bg: rgb(243, 105, 105);
+}
+
+@keyframes pulse-once {
+	0% {
+		background-color: transparent;
+	}
+	10% {
+		background-color: var(--bg);
+	}
+	100% {
+		background-color: transparent;
+	}
+}

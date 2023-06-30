@@ -1,10 +1,12 @@
 import type { MatchData } from "./hooks/useFeed";
 
+import "./table.css";
+
 type Props = { data: MatchData[] };
 
 export const LatestTradesPanel: React.FC<Props> = ({ data }) => {
 	return (
-		<div>
+		<div className="LatestTradesPanel">
 			<table>
 				<tr>
 					<th>Trade ID</th>
@@ -14,7 +16,7 @@ export const LatestTradesPanel: React.FC<Props> = ({ data }) => {
 					<th>Time</th>
 				</tr>
 				{data.map(({ trade_id, side, price, size, time }) => (
-					<tr>
+					<tr key={trade_id} className={["new-row", side].join(" ")}>
 						<td>{trade_id}</td>
 						<td>{side}</td>
 						<td>{price}</td>
