@@ -3,6 +3,8 @@ import useWebSocket from "react-use-websocket";
 
 const WS_URL = "wss://ws-feed.exchange.coinbase.com";
 
+const DATA_MAX_COUNT = 50;
+
 const getMessage = (
 	type: "subscribe" | "unsubscribe",
 	currencyPairId: string
@@ -42,7 +44,11 @@ export const useFeed = ({ currencyPairId }: Props) => {
 		onMessage: (event: WebSocketEventMap["message"]) => {
 			const newData = JSON.parse(event.data);
 			if (newData.type !== "match") return;
-			setData((oldData) => [newData, ...oldData]);
+			setData((oldData) => {
+				const data = [newData, ...oldData];
+				data.length = Math.min(data.length, DATA_MAX_COUNT);
+				return data;
+			});
 		},
 	});
 
