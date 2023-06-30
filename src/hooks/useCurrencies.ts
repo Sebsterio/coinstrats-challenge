@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import type { PairData } from "../../src/api/coinbase.ts";
 import { getTradingPairs } from "../../src/api/coinbase.ts";
@@ -30,6 +30,11 @@ export const useCurrencies = () => {
 
 	const [baseCurrencySelected, setBaseCurrencySelected] = useState(DEFAULT_BASE_CURRENCY); // prettier-ignore
 	const [quoteCurrencySelected, setQuoteCurrencySelected] = useState(DEFAULT_QUOTE_CURRENCY); // prettier-ignore
+
+	const currencyPairId = useMemo(
+		() => `${baseCurrencySelected}-${quoteCurrencySelected}`,
+		[baseCurrencySelected, quoteCurrencySelected]
+	);
 
 	useEffect(() => {
 		getTradingPairs().then(
@@ -66,6 +71,7 @@ export const useCurrencies = () => {
 	}, [currencies, baseCurrencySelected, quoteCurrencySelected]);
 
 	return {
+		currencyPairId,
 		baseCurrencies,
 		quoteCurrencies,
 		baseCurrencySelected,
