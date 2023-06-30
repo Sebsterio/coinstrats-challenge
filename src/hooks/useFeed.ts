@@ -6,20 +6,34 @@ const WS_URL = "wss://ws-feed.exchange.coinbase.com";
 const subscribeMsg = {
 	type: "subscribe",
 	product_ids: ["ETH-USD"],
-	channels: ["heartbeat"],
+	channels: ["matches"],
+};
+
+type MatchData = {
+	type: string;
+	trade_id: number;
+	maker_order_id: string;
+	taker_order_id: string;
+	side: string;
+	size: string;
+	price: string;
+	product_id: string;
+	sequence: number;
+	time: string;
 };
 
 export const useFeed = () => {
 	const [isEnabled, setIsEnabled] = useState(true);
 	const [isOpen, setIsOpen] = useState(false);
-	const [data, setData] = useState({});
+	const [data, setData] = useState<MatchData[]>([]);
 
 	const { sendJsonMessage } = useWebSocket(isEnabled ? WS_URL : null, {
 		onOpen: () => setIsOpen(true),
 		onClose: () => setIsOpen(false),
 		onMessage: (event: WebSocketEventMap["message"]) => {
-			const data = JSON.parse(event.data);
-			data.type === "heartbeat" && setData(data);
+			const newData = JSON.parse(event.data);
+			if (newData.type !== "match") return;
+			setData((oldData) => [...oldData, newData]);
 		},
 	});
 
