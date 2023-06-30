@@ -19,28 +19,38 @@ export const LatestTradesPanel: React.FC<Props> = ({
 	baseCurrencySelected,
 	quoteCurrencySelected,
 }) => {
+	const [isEnabled, setIsEnabled] = useState(true);
+	const [isOpen, setIsOpen] = useState(false);
 	const [data, setData] = useState({});
 
-	const { sendJsonMessage } = useWebSocket(WS_URL, {
-		onOpen: () => console.log("WS opened."),
-		onClose: () => console.log("WS closed."),
+	const { sendJsonMessage } = useWebSocket(isEnabled ? WS_URL : null, {
+		onOpen: () => setIsOpen(true),
+		onClose: () => setIsOpen(false),
 		onMessage: (event: WebSocketEventMap["message"]) => {
 			const data = JSON.parse(event.data);
-			if (data.type !== "heartbeat") return;
-			setData(data);
+			data.type === "heartbeat" && setData(data);
 		},
 	});
 
 	useEffect(() => {
-		sendJsonMessage(subscribeMsg);
-	}, [sendJsonMessage]);
+		isOpen && sendJsonMessage(subscribeMsg);
+	}, [isOpen, sendJsonMessage]);
 
 	return (
 		<div>
 			<h2>Panel</h2>
+
 			<p>
 				{baseCurrencySelected}-{quoteCurrencySelected}
 			</p>
+
+			<button
+				onClick={() => setIsEnabled(!isEnabled)}
+				disabled={isEnabled !== isOpen}
+			>
+				{isEnabled ? "stop" : "start"}
+			</button>
+
 			<pre>{JSON.stringify(data, null, 2)}</pre>
 		</div>
 	);
