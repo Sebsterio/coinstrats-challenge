@@ -1,7 +1,9 @@
 import type { CurrenciesProps } from "./hooks/useCurrencies.ts";
 import type { FeedProps } from "./hooks/useFeed.ts";
+import type { FiltersProps } from "./hooks/useFilters.ts";
+import { tradeSideFilterOptions } from "./hooks/useFilters.ts";
 
-export const Controls: React.FC<CurrenciesProps & FeedProps> = ({
+export const Controls: React.FC<CurrenciesProps & FeedProps & FiltersProps> = ({
 	baseCurrencies,
 	quoteCurrencies,
 	baseCurrencySelected,
@@ -12,12 +14,18 @@ export const Controls: React.FC<CurrenciesProps & FeedProps> = ({
 	isEnabled,
 	isStatusChanging,
 	toggleFeed,
+	// filters:
+	tradeSide,
+	setTradeSide,
 }) => {
 	const handleSelectBaseCurrency = (e: React.ChangeEvent<HTMLSelectElement>) =>
 		setBaseCurrencySelected(e.target.value);
 
 	const handleSelectQuoteCurrency = (e: React.ChangeEvent<HTMLSelectElement>) =>
 		setQuoteCurrencySelected(e.target.value);
+
+	const handleSelectTradeSide = (e: React.ChangeEvent<HTMLSelectElement>) =>
+		setTradeSide(e.target.value);
 
 	return (
 		<>
@@ -32,6 +40,7 @@ export const Controls: React.FC<CurrenciesProps & FeedProps> = ({
 					</option>
 				))}
 			</select>
+
 			<select
 				name="quote currency"
 				value={quoteCurrencySelected}
@@ -40,6 +49,18 @@ export const Controls: React.FC<CurrenciesProps & FeedProps> = ({
 				{quoteCurrencies.map((currency) => (
 					<option key={currency} value={currency}>
 						{currency}
+					</option>
+				))}
+			</select>
+
+			<select
+				name="trade side"
+				value={tradeSide}
+				onChange={handleSelectTradeSide}
+			>
+				{tradeSideFilterOptions.map((tradeSide) => (
+					<option key={tradeSide} value={tradeSide}>
+						{tradeSide}
 					</option>
 				))}
 			</select>

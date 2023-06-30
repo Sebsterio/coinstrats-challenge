@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import useWebSocket from "react-use-websocket";
 
+import type { TradeSide } from "../hooks/useFilters.ts";
+
 const WS_URL = "wss://ws-feed.exchange.coinbase.com";
 
 const DATA_MAX_COUNT = 50;
@@ -17,7 +19,7 @@ const getMessage = (
 	}
 );
 
-type MatchData = {
+export type MatchData = {
 	type: string;
 	trade_id: number;
 	maker_order_id: string;
@@ -30,9 +32,12 @@ type MatchData = {
 	time: string;
 };
 
-type Props = { currencyPairId: string };
+type Props = {
+	currencyPairId: string;
+	tradeSide: TradeSide;
+};
 
-export const useFeed = ({ currencyPairId }: Props) => {
+export const useFeed = ({ currencyPairId, tradeSide }: Props) => {
 	const [prevCurrencyPairId, setPrevCurrencyPairId] = useState<string>();
 	const [isEnabled, setIsEnabled] = useState(true);
 	const [isOpen, setIsOpen] = useState(false);
@@ -44,6 +49,7 @@ export const useFeed = ({ currencyPairId }: Props) => {
 		onMessage: (event: WebSocketEventMap["message"]) => {
 			const newData = JSON.parse(event.data);
 			if (newData.type !== "match") return;
+			if (newData.side !== tradeSide && tradeSide !== "all") return;
 			setData((oldData) => {
 				const data = [newData, ...oldData];
 				data.length = Math.min(data.length, DATA_MAX_COUNT);
@@ -51,6 +57,11 @@ export const useFeed = ({ currencyPairId }: Props) => {
 			});
 		},
 	});
+
+	useEffect(() => {
+		setData([]);
+		setIsEnabled(true);
+	}, [tradeSide]);
 
 	useEffect(() => {
 		if (prevCurrencyPairId === currencyPairId) return;
