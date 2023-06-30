@@ -4,7 +4,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 
 import type { MatchData } from "./hooks/useFeed";
 
@@ -28,9 +27,9 @@ type Props = { data: MatchData[] };
 
 export const LatestTradesPanel: React.FC<Props> = ({ data }) => {
 	return (
-		<div className="LatestTradesPanel">
-			<TableContainer component={Paper}>
-				<Table sx={{ minWidth: 450, maxWidth: 600 }} size="small">
+		<div className="LatestTradesPanel" style={{ flex: 1 }}>
+			<TableContainer style={{ maxHeight: "70vh" }}>
+				<Table size="small">
 					<TableHead>
 						<TableRow>
 							<TableCell> Trade ID </TableCell>
