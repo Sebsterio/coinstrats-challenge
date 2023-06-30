@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import type { CurrenciesProps } from "./hooks/useCurrencies.ts";
 import type { FeedProps } from "./hooks/useFeed.ts";
@@ -53,9 +54,15 @@ export const Controls: React.FC<CurrenciesProps & FeedProps & FiltersProps> = ({
 				onChange={handleSelectTradeSide}
 			/>
 
-			<button onClick={toggleFeed} disabled={isStatusChanging}>
-				{isEnabled ? "stop" : "start"}
-			</button>
+			<Box style={{ flex: 1, textAlign: "right" }}>
+				<Button
+					variant="outlined"
+					onClick={toggleFeed}
+					disabled={isStatusChanging}
+				>
+					{isEnabled ? "stop" : "start"}
+				</Button>
+			</Box>
 		</Box>
 	);
 };
