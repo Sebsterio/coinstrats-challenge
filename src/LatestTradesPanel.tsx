@@ -15,6 +15,9 @@ const formatTime = (time: string) => {
 	return `${pad(h)}:${pad(m)}:${pad(s)}`;
 };
 
+const formatNumber = (input: number | string, padding: number) =>
+	Number(input).toFixed(padding);
+
 export const LatestTradesPanel: React.FC<Props> = ({ data }) => {
 	return (
 		<div className="LatestTradesPanel">
@@ -30,8 +33,8 @@ export const LatestTradesPanel: React.FC<Props> = ({ data }) => {
 					<tr key={trade_id} className={["new-row", side].join(" ")}>
 						<td>{trade_id}</td>
 						<td>{side}</td>
-						<td>{price}</td>
-						<td>{size}</td>
+						<td>{formatNumber(price, 2)}</td>
+						<td>{formatNumber(price, 8)}</td>
 						<td>{formatTime(time)}</td>
 					</tr>
 				))}
