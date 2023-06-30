@@ -42,7 +42,7 @@ export const useFeed = ({ currencyPairId }: Props) => {
 		onMessage: (event: WebSocketEventMap["message"]) => {
 			const newData = JSON.parse(event.data);
 			if (newData.type !== "match") return;
-			setData((oldData) => [...oldData, newData]);
+			setData((oldData) => [newData, ...oldData]);
 		},
 	});
 
