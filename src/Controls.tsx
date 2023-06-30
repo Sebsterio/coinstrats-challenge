@@ -1,7 +1,10 @@
+import Box from "@mui/material/Box";
+
 import type { CurrenciesProps } from "./hooks/useCurrencies.ts";
 import type { FeedProps } from "./hooks/useFeed.ts";
 import type { FiltersProps } from "./hooks/useFilters.ts";
 import { tradeSideFilterOptions } from "./hooks/useFilters.ts";
+import { Select, SelectOnChangeProp } from "./Select.tsx";
 
 export const Controls: React.FC<CurrenciesProps & FeedProps & FiltersProps> = ({
 	baseCurrencies,
@@ -18,56 +21,41 @@ export const Controls: React.FC<CurrenciesProps & FeedProps & FiltersProps> = ({
 	tradeSide,
 	setTradeSide,
 }) => {
-	const handleSelectBaseCurrency = (e: React.ChangeEvent<HTMLSelectElement>) =>
+	const handleSelectBaseCurrency: SelectOnChangeProp = (e) =>
 		setBaseCurrencySelected(e.target.value);
 
-	const handleSelectQuoteCurrency = (e: React.ChangeEvent<HTMLSelectElement>) =>
+	const handleSelectQuoteCurrency: SelectOnChangeProp = (e) =>
 		setQuoteCurrencySelected(e.target.value);
 
-	const handleSelectTradeSide = (e: React.ChangeEvent<HTMLSelectElement>) =>
+	const handleSelectTradeSide: SelectOnChangeProp = (e) =>
 		setTradeSide(e.target.value);
 
 	return (
-		<>
-			<select
+		<Box sx={{ display: "flex", gap: 1 }}>
+			<Select
 				name="base currency"
 				value={baseCurrencySelected}
+				options={baseCurrencies}
 				onChange={handleSelectBaseCurrency}
-			>
-				{baseCurrencies.map((currency) => (
-					<option key={currency} value={currency}>
-						{currency}
-					</option>
-				))}
-			</select>
+			/>
 
-			<select
+			<Select
 				name="quote currency"
 				value={quoteCurrencySelected}
+				options={quoteCurrencies}
 				onChange={handleSelectQuoteCurrency}
-			>
-				{quoteCurrencies.map((currency) => (
-					<option key={currency} value={currency}>
-						{currency}
-					</option>
-				))}
-			</select>
+			/>
 
-			<select
+			<Select
 				name="trade side"
 				value={tradeSide}
+				options={tradeSideFilterOptions}
 				onChange={handleSelectTradeSide}
-			>
-				{tradeSideFilterOptions.map((tradeSide) => (
-					<option key={tradeSide} value={tradeSide}>
-						{tradeSide}
-					</option>
-				))}
-			</select>
+			/>
 
 			<button onClick={toggleFeed} disabled={isStatusChanging}>
 				{isEnabled ? "stop" : "start"}
 			</button>
-		</>
+		</Box>
 	);
 };
