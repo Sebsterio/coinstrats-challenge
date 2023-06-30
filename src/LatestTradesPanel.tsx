@@ -4,6 +4,17 @@ import "./table.css";
 
 type Props = { data: MatchData[] };
 
+const pad = (num: number) => String(num).padStart(2, "0");
+
+const formatTime = (time: string) => {
+	const date = new Date(time);
+	const h = date.getHours();
+	const m = date.getMinutes();
+	const s = date.getSeconds();
+
+	return `${pad(h)}:${pad(m)}:${pad(s)}`;
+};
+
 export const LatestTradesPanel: React.FC<Props> = ({ data }) => {
 	return (
 		<div className="LatestTradesPanel">
@@ -21,7 +32,7 @@ export const LatestTradesPanel: React.FC<Props> = ({ data }) => {
 						<td>{side}</td>
 						<td>{price}</td>
 						<td>{size}</td>
-						<td>{time}</td>
+						<td>{formatTime(time)}</td>
 					</tr>
 				))}
 			</table>
